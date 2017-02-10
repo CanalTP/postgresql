@@ -38,4 +38,5 @@
     path: "/var/lib/{{ postgresql_varlib_directory_name }}"
     owner: "{{ postgresql_admin_user }}"
     group: "{{ postgresql_admin_user }}"
+  when: ansible_os_family == "Debian"
   
