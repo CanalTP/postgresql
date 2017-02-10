@@ -33,7 +33,7 @@
   when: monit_protection is defined and monit_protection == true
   tags: [postgresql, postgresql-monit]
 
-- name: Change directory owner on postgresql mount point
+- name: Change directory owner on postgresql mount point | Debian
   file:
     path: "/var/lib/{{ postgresql_varlib_directory_name }}"
     owner: "{{ postgresql_admin_user }}"
