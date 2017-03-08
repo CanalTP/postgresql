@@ -1,6 +1,6 @@
 # file: postgresql/tasks/extensions/networker.yml
 - file:
-    path: "/var/lib/postgresql/9.4/main/backup/basebackup/archive"
+    path: "/var/lib/postgresql/9.4/main/backup/archive"
     state: "directory"
     mode: "600"
     owner: "postgres"
