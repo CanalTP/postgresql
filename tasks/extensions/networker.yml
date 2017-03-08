@@ -1,4 +1,10 @@
 # file: postgresql/tasks/extensions/postgis.yml
+- file:
+    path: "/var/lib/postgresql/9.4/main/backup/basebackup/archive"
+    state: "directory"
+    mode: "600"
+    owner: "postgres"
+    group: "postgres"
 
 - name: PostgreSQL | Extensions | Adding networker pre and post backup commands
   copy:
