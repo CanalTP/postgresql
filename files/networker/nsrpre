@@ -1,9 +1,14 @@
 #!/bin/sh
-su - postgres -c 'touch /tmp/nsrpre.log'
-su - postgres -c 'test -d "/tmp/pg_backup" && mkdir /tmp/pg_backup'
-date >> /tmp/nsrpre.log
-export >> /tmp/nsrpre.log
+logfile=/tmp/nsrpre.log
+backupdir=/tmp/pg_backup
 
-id >> /tmp/nsrpre.log
+su - postgres -c 'touch $logfile'
+su - postgres -c 'test -d "$backupdir" || mkdir $backupdir' 2>&1 | tee -a $logfile
+test -d "/tmp/pg_backup" && rm -rf /tmp/pg_backup/* 2>&1 | tee -a $logfile
+date 2>&1 | tee -a $logfile
+export 2>&1 | tee -a $logfile
 
-su - postgres -c "/usr/bin/pg_basebackup -p 5432 -U replicator -w -D /tmp/pg_backup/basebackup -X stream -F plain --verbose -h 127.0.0.1 2>&1 | tee -a /tmp/nsrpre.log "
+id 2>&1 | tee -a $logfile
+
+#su - postgres -c "/usr/bin/pg_basebackup -p 5432 -U replicator -w -D /tmp/pg_backup/basebackup -X stream -F plain --verbose -h 127.0.0.1 2>&1 | tee -a $logfile "
+su - postgres -c "/usr/bin/pg_dumpall -p 5432 -U postgres -w > /tmp/pg_backup/pg_dumpall.dmp 2>&1 | tee -a $logfile"

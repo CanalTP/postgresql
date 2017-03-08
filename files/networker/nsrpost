@@ -3,7 +3,7 @@ su - postgres -c 'touch /tmp/nsrpost.log'
 date >> /tmp/nsrpost.log
 export >> /tmp/nsrpost.log
 
-/usr/bin/pg_archivecleanup -d /tmp/pg_backup/archive `cd /tmp/pg_backup/archive; ls -1rt *.backup| tail -1`  2>&1 | tee -a /tmp/nsrpost.log
+#/usr/bin/pg_archivecleanup -d /tmp/pg_backup/archive `cd /tmp/pg_backup/archive; ls -1rt *.backup| tail -1`  2>&1 | tee -a /tmp/nsrpost.log
 
 echo ' Removing base_backup'
-rm -rf /tmp/pg_backup/basebackup/* 2>&1 | tee -a /tmp/nsrpost.log
+rm -f /tmp/pg_backup/pg_dumpall.dmp 2>&1 | tee -a /tmp/nsrpost.log
