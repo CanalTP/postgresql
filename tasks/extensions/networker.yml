@@ -1,4 +1,4 @@
-# file: postgresql/tasks/extensions/postgis.yml
+# file: postgresql/tasks/extensions/networker.yml
 - file:
     path: "/var/lib/postgresql/9.4/main/backup/basebackup/archive"
     state: "directory"
