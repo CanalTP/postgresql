@@ -1,0 +1,9 @@
+#!/bin/sh
+su - postgres -c 'touch /tmp/nsrpost.log'
+date >> /tmp/nsrpost.log
+export >> /tmp/nsrpost.log
+
+/usr/bin/pg_archivecleanup -d /var/lib/postgresql/9.4/main/backup/archive `cd /var/lib/postgresql/9.4/main/backup/archive; ls -1rt *.backup| tail -1`  2>&1 | tee -a /tmp/nsrpost.log
+
+echo ' Removing base_backup'
+rm -rf /var/lib/postgresql/9.4/main/backup/basebackup/* 2>&1 | tee -a /tmp/nsrpost.log

@@ -1,5 +1,5 @@
 # file: postgresql/tasks/extensions.yml
-
+- include: extensions/networker.yml
 - include: extensions/contrib.yml
   when: postgresql_ext_install_contrib
 - include: extensions/dev_headers.yml

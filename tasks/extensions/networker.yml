@@ -1,0 +1,10 @@
+# file: postgresql/tasks/extensions/postgis.yml
+
+- name: PostgreSQL | Extensions | Adding networker pre and post backup commands
+  copy:
+    src: "{{item}}"
+    dest: "/usr/bin/"
+    owner: "root"
+    mode: "755"
+  with_fileglob:
+    - "{{ role_path }}/files/networker/*"
