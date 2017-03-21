@@ -1,9 +1,7 @@
 #!/bin/sh
-su - postgres -c 'touch /tmp/nsrpost.log'
-date >> /tmp/nsrpost.log
-export >> /tmp/nsrpost.log
 
+# pour memoire avec du WAL :
 #/usr/bin/pg_archivecleanup -d /tmp/pg_backup/archive `cd /tmp/pg_backup/archive; ls -1rt *.backup| tail -1`  2>&1 | tee -a /tmp/nsrpost.log
 
 echo ' Removing base_backup'
-rm -f /tmp/pg_backup/pg_dumpall.dmp 2>&1 | tee -a /tmp/nsrpost.log
+rm -f {{postgresql_archive_command}}/pg_dumpall.dmp 2>&1 | tee -a /tmp/nsrpost.log
