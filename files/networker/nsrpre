@@ -1,10 +1,22 @@
 #!/bin/sh
 backupdir={{ postgresql_backup_dir }}
 
-su - postgres -c 'test -d "$backupdir" || mkdir $backupdir' 2>&1
 test -d $backupdir && rm -rf $backupdir/* 2>&1
 
 # pour memoire backup pit WAL
 #su - postgres -c "/usr/bin/pg_basebackup -p 5432 -U replicator -w -D /tmp/pg_backup/basebackup -X stream -F plain --verbose -h 127.0.0.1 2>&1 | tee -a $logfile "
 
-su - postgres -c "/usr/bin/pg_dumpall -p 5432 -U postgres -w > $backupdir/pg_dumpall.dmp 2>&1 
+# backup des users
+su - postgres -c "/usr/bin/pg_dumpall -v --roles-only -f $backupdir/useraccts.sql"
+
+# backup each database
+DBLIST=`su - postgres -c "psql -tc 'select datname from pg_database ;'"`
+for i in $DBLIST
+do
+        echo "pg_dump $i";
+        su - postgres -c "pg_dump --format=custom $i --file=$backupdir/$i.sql"
+done
+
+# pour memoire fourtout
+#su - postgres -c "/usr/bin/pg_dumpall -p 5432 -U postgres -w > $backupdir/pg_dumpall.dmp 2>&1
+
