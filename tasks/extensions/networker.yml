@@ -1,19 +1,16 @@
 # file: postgresql/tasks/extensions/networker.yml
 
-- name: Networker agent | prescript
+- name: Networker agent | create backup repository
   file:
     path: "{{ postgresql_backup_dir }}"
     state: "directory"
-    mode: "755"
     owner: "postgres"
     group: "postgres"
 
 
-- name: PostgreSQL | Extensions | Adding networker pre and post backup commands
+- name: PostgreSQL | Extensions | Adding networker pre and pg_dumpall scripts
   template:
     src: "{{ item }}"
-    dest: "/usr/bin/"
-    owner: "root"
-    mode: "755"
+    dest: "/usr/sbin/"
   with_fileglob:
     - "{{ role_path }}/files/networker/*"

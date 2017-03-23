@@ -1,0 +1,53 @@
+#!/bin/bash
+# Backup each PostgreSQL database in a single file using custom compressed format
+# fdegomme@canaltp.fr 20140828
+#   * argument handling added for destination directory
+
+# Red Hat / NetWorker special case: the PATH is not really defined in the env
+# force definition and export here
+PATH=$PATH:/usr/bin
+export PATH
+
+which pg_dump > /dev/null 2>&1 || exit 1
+
+usage() {
+	printf "Usage: %s [destination directory]\n\nDefault destination directory : /backup\n" "$0" > /dev/stderr
+	exit 1
+}
+
+[ "$1" == "-h" ] && usage
+
+# if argument provided, catch it for destination_dir
+[ -n "$1" ] && destination_dir="$1" || destination_dir="/backup"
+
+[ -d $destination_dir ] || mkdir --parents $destination_dir
+
+if [ "$(id --user)" == "0" ]
+then
+        # first get all databases on this server, ignore template(0|1) databases
+        databases=$(su - postgres -c 'psql -t --command="\list"' | awk '{print $1}' | sed "/^$/d;/^|$/d;/^template./d")
+        for database in $databases
+        do
+                echo "Backuping $database..."
+                # dump the database and catch pg_dump return code
+                su - postgres -c "pg_dump --format=custom $database --file=${destination_dir}/$database.sql"
+                if [ $? -ne 0 ]
+                then
+                  echo "Backup failed to finish for $database"
+                  exit 1
+                fi
+
+                # verify that the dump integrity is correct
+                pg_restore --list ${destination_dir}/$database.sql | grep --quiet "^; Archive created at"
+                # if not quit directly
+                if [ $? -ne 0 ]
+                then
+                  echo "Backup failed for $database"
+                  exit 1
+                fi
+        done
+else
+        echo "You must execute this script with root user"
+        exit 1
+fi
+
